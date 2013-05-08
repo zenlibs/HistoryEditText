@@ -857,7 +857,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
         if (list != null) {
             // WARNING: Please read the comment where mListSelectionHidden is declared
             list.mListSelectionHidden = true;
-            list.hideSelector();
+            list.hideSelectorCompat();
             list.requestLayout();
         }
     }
@@ -1505,7 +1505,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
      * displayed on screen within a drop down. The focus is never actually
      * passed to the drop down; the list only looks focused.</p>
      */
-    private static class DropDownListView extends ListView {
+    private static class DropDownListView extends FroyoListView {
         /*
          * WARNING: This is a workaround for a touch mode issue.
          *
