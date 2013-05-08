@@ -202,7 +202,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         mHintResource = a.getResourceId(R.styleable.HistoryEditText_completionHintView,
-                R.layout.simple_dropdown_hint);
+                R.layout.het__simple_dropdown_hint);
 
         // Always turn on the auto complete input type flag, since it
         // makes no sense to use this widget without it.
