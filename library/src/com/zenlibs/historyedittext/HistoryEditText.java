@@ -173,35 +173,35 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
 
         TypedArray a =
             context.obtainStyledAttributes(
-                attrs, android.R.styleable.HistoryEditText, defStyle, 0);
+                attrs, R.styleable.HistoryEditText, defStyle, 0);
 
         mThreshold = a.getInt(
-                android.R.styleable.AutoCompleteTextView_completionThreshold, 2);
+                R.styleable.HistoryEditText_completionThreshold, 2);
 
-        mHintText = a.getText(android.R.styleable.AutoCompleteTextView_completionHint);
+        mHintText = a.getText(R.styleable.HistoryEditText_completionHint);
 
         mDropDownListHighlight = a.getDrawable(
-                android.R.styleable.AutoCompleteTextView_dropDownSelector);
+                R.styleable.HistoryEditText_dropDownSelector);
         mDropDownVerticalOffset = (int)
-                a.getDimension(android.R.styleable.AutoCompleteTextView_dropDownVerticalOffset, 0.0f);
+                a.getDimension(R.styleable.HistoryEditText_dropDownVerticalOffset, 0.0f);
         mDropDownHorizontalOffset = (int)
-                a.getDimension(android.R.styleable.AutoCompleteTextView_dropDownHorizontalOffset, 0.0f);
+                a.getDimension(R.styleable.HistoryEditText_dropDownHorizontalOffset, 0.0f);
         
         // Get the anchor's id now, but the view won't be ready, so wait to actually get the
         // view and store it in mDropDownAnchorView lazily in getDropDownAnchorView later.
         // Defaults to NO_ID, in which case the getDropDownAnchorView method will simply return
         // this TextView, as a default anchoring point.
-        mDropDownAnchorId = a.getResourceId(android.R.styleable.AutoCompleteTextView_dropDownAnchor,
+        mDropDownAnchorId = a.getResourceId(R.styleable.HistoryEditText_dropDownAnchor,
                 View.NO_ID);
         
         // For dropdown width, the developer can specify a specific width, or MATCH_PARENT
         // (for full screen width) or WRAP_CONTENT (to match the width of the anchored view).
-        mDropDownWidth = a.getLayoutDimension(android.R.styleable.AutoCompleteTextView_dropDownWidth,
+        mDropDownWidth = a.getLayoutDimension(R.styleable.HistoryEditText_dropDownWidth,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        mDropDownHeight = a.getLayoutDimension(android.R.styleable.AutoCompleteTextView_dropDownHeight,
+        mDropDownHeight = a.getLayoutDimension(R.styleable.HistoryEditText_dropDownHeight,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        mHintResource = a.getResourceId(android.R.styleable.AutoCompleteTextView_completionHintView,
+        mHintResource = a.getResourceId(R.styleable.HistoryEditText_completionHintView,
                 R.layout.simple_dropdown_hint);
 
         // Always turn on the auto complete input type flag, since it
