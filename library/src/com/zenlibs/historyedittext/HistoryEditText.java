@@ -31,9 +31,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.CompletionInfo;
@@ -118,7 +115,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
     private Filter mFilter;
     private int mThreshold;
 
-    private PopupWindow mPopup;
+    private FroyoPopupWindow mPopup;
     private DropDownListView mDropDownList;
     private int mDropDownVerticalOffset;
     private int mDropDownHorizontalOffset;
@@ -155,6 +152,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
 
     private PassThroughClickListener mPassThroughClickListener;
     private PopupDataSetObserver mObserver;
+    private InputMethodManager mImm;
 
     public HistoryEditText(Context context) {
         this(context, null);
@@ -166,8 +164,10 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
 
     public HistoryEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        
+        mImm =  (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        mPopup = new PopupWindow(context, attrs,
+        mPopup = new FroyoPopupWindow(context, attrs,
                 android.R.attr.autoCompleteTextViewStyle);
         mPopup.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
@@ -1082,9 +1082,8 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
      * <p>Closes the drop down if present on screen.</p>
      */
     public void dismissDropDown() {
-        InputMethodManager imm = InputMethodManager.peekInstance();
-        if (imm != null) {
-            imm.displayCompletions(this, null);
+        if (mImm != null) {
+            mImm.displayCompletions(this, null);
         }
         mPopup.dismiss();
         mPopup.setContentView(null);
@@ -1247,8 +1246,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
 
         final ListAdapter adapter = mAdapter;
         if (adapter != null) {
-            InputMethodManager imm = InputMethodManager.peekInstance();
-            if (imm != null) {
+            if (mImm != null) {
                 final int count = Math.min(adapter.getCount(), 20);
                 CompletionInfo[] completions = new CompletionInfo[count];
                 int realCount = 0;
@@ -1269,7 +1267,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
                     completions = tmp;
                 }
 
-                imm.displayCompletions(this, completions);
+                mImm.displayCompletions(this, completions);
             }
         }
 
@@ -1383,7 +1381,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
         }
 
         final int listContent = mDropDownList.measureHeightOfChildren(MeasureSpec.UNSPECIFIED,
-                0, ListView.NO_POSITION, maxHeight - otherHeights, 2);
+                0, FroyoListView.NO_POSITION, maxHeight - otherHeights, 2);
         // add padding only if the list has items in it, that way we don't show
         // the popup if it is not needed
         if (listContent > 0) otherHeights += padding;
