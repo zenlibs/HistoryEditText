@@ -45,7 +45,7 @@ public class FroyoListView extends ListView {
             // check that this method still exists and that it hasn't
             mHideSelectorMethod = getClass().getMethod("hideSelector");
             mDispatchFinishTemporaryDispatchMethod = View.class.getMethod("dispatchFinishTemporaryDetach");
-            mMeasureHeightOfChildren = getClass().getMethod("measureHeightOfChildren", int.class, int.class, int.class, int.class, int.class); 
+            mMeasureHeightOfChildren = getClass().getMethod("measureHeightOfChildren", int.class, int.class, int.class, int.class, int.class);
 
             Field recyclerField = getClass().getField("mRecycler");
             mRecycler = recyclerField.get(this);
@@ -73,7 +73,7 @@ public class FroyoListView extends ListView {
         }
     }
 
-    int lookForSelectablePosition(int position, boolean lookDown) {
+    int lookForSelectablePositionCompat(int position, boolean lookDown) {
         final ListAdapter adapter = getAdapter();
         if (adapter == null || isInTouchMode()) {
             return INVALID_POSITION;
@@ -178,8 +178,8 @@ public class FroyoListView extends ListView {
         return null;
     }
     
-    public final int measureHeightOfChildren(int widthMeasureSpec, int startPosition, int endPosition,
-            final int maxHeight, int disallowPartialChildPosition) {
+    public final int measureHeightOfChildrenCompat(int widthMeasureSpec, int startPosition, int endPosition,
+                                                   final int maxHeight, int disallowPartialChildPosition) {
         try {
             return (Integer) mMeasureHeightOfChildren.invoke(this, widthMeasureSpec, startPosition, endPosition,
                 maxHeight, disallowPartialChildPosition);

@@ -689,9 +689,9 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
                 if (adapter != null) {
                     allEnabled = adapter.areAllItemsEnabled();
                     firstItem = allEnabled ? 0 :
-                            mDropDownList.lookForSelectablePosition(0, true);
+                            mDropDownList.lookForSelectablePositionCompat(0, true);
                     lastItem = allEnabled ? adapter.getCount() - 1 :
-                            mDropDownList.lookForSelectablePosition(adapter.getCount() - 1, false);                    
+                            mDropDownList.lookForSelectablePositionCompat(adapter.getCount() - 1, false);
                 }
                 
                 if ((below && keyCode == KeyEvent.KEYCODE_DPAD_UP && curIndex <= firstItem) ||
@@ -1380,7 +1380,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
             return maxHeight + padding;
         }
 
-        final int listContent = mDropDownList.measureHeightOfChildren(MeasureSpec.UNSPECIFIED,
+        final int listContent = mDropDownList.measureHeightOfChildrenCompat(MeasureSpec.UNSPECIFIED,
                 0, FroyoListView.NO_POSITION, maxHeight - otherHeights, 2);
         // add padding only if the list has items in it, that way we don't show
         // the popup if it is not needed
