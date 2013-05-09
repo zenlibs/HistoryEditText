@@ -181,15 +181,19 @@ public class FroyoListView extends ListView {
     public final int measureHeightOfChildrenCompat(int widthMeasureSpec, int startPosition, int endPosition,
                                                    final int maxHeight, int disallowPartialChildPosition) {
         try {
-            return (Integer) mMeasureHeightOfChildren.invoke(this, widthMeasureSpec, startPosition, endPosition,
+            Object result = mMeasureHeightOfChildren.invoke(this, widthMeasureSpec, startPosition, endPosition,
                 maxHeight, disallowPartialChildPosition);
+            return (Integer) result;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        
         return 0;
     }
 }

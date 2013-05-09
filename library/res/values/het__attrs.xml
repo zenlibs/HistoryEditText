@@ -2,73 +2,15 @@
 <resources>
 
     <declare-styleable name="HistoryEditText">
-
-        <!-- Defines the hint displayed in the drop down menu. -->
-        <attr name="completionHint" format="string" />
-        <!-- Defines the hint view displayed in the drop down menu. -->
-        <attr name="completionHintView" format="reference" />
-        <!--
-         Defines the number of characters that the user must type before
-         completion suggestions are displayed in a drop down menu.
-        -->
-        <attr name="completionThreshold" format="integer" min="1" />
-        <!-- Selector in a drop down list. -->
-        <attr name="dropDownSelector" format="reference|color" />
-        <!-- Amount of pixels by which the drop down should be offset vertically. -->
-        <attr name="dropDownVerticalOffset" format="dimension" />
-        <!-- Amount of pixels by which the drop down should be offset horizontally. -->
-        <attr name="dropDownHorizontalOffset" format="dimension" />
-        <!--
-             View to anchor the auto-complete dropdown to. If not specified, the text view itself
-             is used.
-        -->
-        <attr name="dropDownAnchor" format="reference" />
-        <!--
-             Specifies the basic width of the dropdown. Its value may
-             be a dimension (such as "12dip") for a constant width,
-             fill_parent or match_parent to match the width of the 
-             screen, or wrap_content to match the width of
-             the anchored view.
-        -->
-        <attr name="dropDownWidth" format="dimension">
-
-            <!--
-                 The dropdown should fill the width of the screen.
-                 This constant is deprecated starting from API Level 8 and
-                 is replaced by {@code match_parent}.
-            -->
-            <enum name="fill_parent" value="-1" />
-            <!--
-                 The dropdown should fit the width of the screen.
-                 Introduced in API Level 8.
-            -->
-            <enum name="match_parent" value="-1" />
-            <!-- The dropdown should fit the width of its anchor. -->
-            <enum name="wrap_content" value="-2" />
-        </attr>
-        <!--
-             Specifies the basic height of the dropdown. Its value may
-             be a dimension (such as "12dip") for a constant height,
-             fill_parent or match_parent to fill the height of the
-             screen, or wrap_content to match the height of
-             the content of the drop down.
-        -->
-        <attr name="dropDownHeight" format="dimension">
-
-            <!--
-                 The dropdown should fit the height of the screen.
-                 This constant is deprecated starting from API Level 8 and
-                 is replaced by {@code match_parent}.
-            -->
-            <enum name="fill_parent" value="-1" />
-            <!--
-                 The dropdown should fit the height of the screen.
-                 Introduced in API Level 8.
-            -->
-            <enum name="match_parent" value="-1" />
-            <!-- The dropdown should fit the height of the content. -->
-            <enum name="wrap_content" value="-2" />
-        </attr>
+        <attr name="android:completionHint" />
+        <attr name="android:completionHintView" />
+        <attr name="android:completionThreshold" />
+        <attr name="android:dropDownSelector" />
+        <attr name="android:dropDownVerticalOffset" />
+        <attr name="android:dropDownHorizontalOffset" />
+        <attr name="android:dropDownAnchor" />
+        <attr name="android:dropDownWidth" />
+        <attr name="android:dropDownHeight" />
         <attr name="android:inputType" />
     </declare-styleable>
 

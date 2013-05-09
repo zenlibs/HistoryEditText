@@ -62,7 +62,7 @@ public class FroyoPopupWindow extends PopupWindow {
         }
     }
         
-    public int getMaxAvailableHeight(View anchor, int yOffset, boolean ignoreBottomDecorations) {
+    public int getMaxAvailableHeightCompat(View anchor, int yOffset, boolean ignoreBottomDecorations) {
         try {
             return (Integer) mGetMaxAvailableHeightMethod.invoke(this, anchor, yOffset, ignoreBottomDecorations);
         } catch (IllegalArgumentException e) {
@@ -71,7 +71,10 @@ public class FroyoPopupWindow extends PopupWindow {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return 0;
     }
 }
