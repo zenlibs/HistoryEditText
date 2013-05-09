@@ -15,20 +15,22 @@
  */
 package com.zenlibs.historyedittext.demo;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.actionbarsherlock.app.SherlockListActivity;
+import com.zenlibs.historyedittext.demo.simplehistorysample.SimpleHistoryActivity;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class HomeActivity extends SherlockListActivity {
-    private List<ActivityInfo> activitiesInfo = Arrays.asList();
+    private List<ActivityInfo> activitiesInfo = Arrays.asList(
+            new ActivityInfo(SimpleHistoryActivity.class, R.string.activity_title_simple_history)
+    );
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {

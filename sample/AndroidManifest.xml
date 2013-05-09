@@ -22,5 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".simplehistorysample.SimpleHistoryActivity"
+                android:label="@string/activity_title_simple_history"/>
     </application>
 </manifest>

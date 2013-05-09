@@ -1417,7 +1417,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
      * Returns the Validator set with {@link #setValidator},
      * or <code>null</code> if it was not set.
      *
-     * @see #setValidator(android.widget.AutoCompleteTextView.Validator)
+     * @see #setValidator(com.zenlibs.historyedittext.HistoryEditText.Validator)
      * @see #performValidation()
      */
     public Validator getValidator() {
@@ -1429,7 +1429,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
      * ask the validator to fix it.
      *
      * @see #getValidator()
-     * @see #setValidator(android.widget.AutoCompleteTextView.Validator)
+     * @see #setValidator(com.zenlibs.historyedittext.HistoryEditText.Validator)
      */
     public void performValidation() {
         if (mValidator == null) return;

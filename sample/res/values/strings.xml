@@ -2,4 +2,5 @@
 <resources>
 
     <string name="app_name">HistoryEditText Demo</string>
+    <string name="activity_title_simple_history">Simple History</string>
 </resources>

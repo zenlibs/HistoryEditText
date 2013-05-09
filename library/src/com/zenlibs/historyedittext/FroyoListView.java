@@ -1,15 +1,15 @@
 package com.zenlibs.historyedittext;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewDebug;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class FroyoListView extends ListView {
     /**
