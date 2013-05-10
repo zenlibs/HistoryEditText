@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewDebug;
+import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -43,18 +44,24 @@ public class FroyoListView extends ListView {
         try {
             // This is dangerous, whenever a new version of Android is released we should
             // check that this method still exists and that it hasn't
-            mHideSelectorMethod = getClass().getMethod("hideSelector");
-            mDispatchFinishTemporaryDispatchMethod = View.class.getMethod("dispatchFinishTemporaryDetach");
-            mMeasureHeightOfChildren = getClass().getMethod("measureHeightOfChildren", int.class, int.class, int.class, int.class, int.class);
+            mHideSelectorMethod = AbsListView.class.getDeclaredMethod("hideSelector");
+            mHideSelectorMethod.setAccessible(true);
+            mDispatchFinishTemporaryDispatchMethod = View.class.getDeclaredMethod("dispatchFinishTemporaryDetach");
+            mDispatchFinishTemporaryDispatchMethod.setAccessible(true);
+            mMeasureHeightOfChildren = ListView.class.getDeclaredMethod("measureHeightOfChildren", int.class, int.class, int.class, int.class, int.class);
+            mMeasureHeightOfChildren.setAccessible(true);
 
-            Field recyclerField = getClass().getField("mRecycler");
+            Field recyclerField = AbsListView.class.getDeclaredField("mRecycler");
+            recyclerField.setAccessible(true);
             mRecycler = recyclerField.get(this);
-            Class<?>[] classes = getClass().getClasses();
+            Class<?>[] classes = AbsListView.class.getDeclaredClasses();
             for (Class<?> class_ : classes) {
                 if (class_.getSimpleName().equals("RecycleBin")) {
                     Class<?> recycleBinClass = class_;
-                    mGetScrapViewMethod = recycleBinClass.getMethod("getScrapView", int.class);
-                    mAddScrapViewMethod = recycleBinClass.getMethod("addScrapView", View.class);
+                    mGetScrapViewMethod = recycleBinClass.getDeclaredMethod("getScrapView", int.class);
+                    mGetScrapViewMethod.setAccessible(true);
+                    mAddScrapViewMethod = recycleBinClass.getDeclaredMethod("addScrapView", View.class, int.class);
+                    mAddScrapViewMethod.setAccessible(true);
                     break;
                 }
             }
