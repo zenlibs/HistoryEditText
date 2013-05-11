@@ -118,7 +118,6 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
 
     private ListAdapter mAdapter;
     private Filter mFilter;
-    private int mThreshold;
 
     private FroyoPopupWindow mPopup;
     private DropDownListView mDropDownList;
@@ -176,8 +175,6 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.HistoryEditText, defStyle,
                 R.style.Widget_HistoryEditText);
-
-        mThreshold = a.getInt(R.styleable.HistoryEditText_android_completionThreshold, 2);
 
         mHintText = a.getText(R.styleable.HistoryEditText_android_completionHint);
 
@@ -473,35 +470,6 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
     }
 
     /**
-     * @return Whether the drop-down is visible as long as there is
-     *         {@link #enoughToFilter()}
-     * 
-     * @hide Pending API council approval
-     */
-    public boolean isDropDownAlwaysVisible() {
-        return mDropDownAlwaysVisible;
-    }
-
-    /**
-     * Sets whether the drop-down should remain visible as long as there is
-     * there is {@link #enoughToFilter()}. This is useful if an unknown number
-     * of results are expected to show up in the adapter sometime in the future.
-     * 
-     * The drop-down will occupy the entire screen below
-     * {@link #getDropDownAnchor} regardless of the size or content of the list.
-     * {@link #getDropDownBackground()} will fill any space that is not used by
-     * the list.
-     * 
-     * @param dropDownAlwaysVisible
-     *            Whether to keep the drop-down visible.
-     * 
-     * @hide Pending API council approval
-     */
-    public void setDropDownAlwaysVisible(boolean dropDownAlwaysVisible) {
-        mDropDownAlwaysVisible = dropDownAlwaysVisible;
-    }
-
-    /**
      * Checks whether the drop-down is dismissed when a suggestion is clicked.
      * 
      * @hide Pending API council approval
@@ -521,47 +489,6 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
      */
     public void setDropDownDismissedOnCompletion(boolean dropDownDismissedOnCompletion) {
         mDropDownDismissedOnCompletion = dropDownDismissedOnCompletion;
-    }
-
-    /**
-     * <p>
-     * Returns the number of characters the user must type before the drop down
-     * list is shown.
-     * </p>
-     * 
-     * @return the minimum number of characters to type to show the drop down
-     * 
-     * @see #setThreshold(int)
-     */
-    public int getThreshold() {
-        return mThreshold;
-    }
-
-    /**
-     * <p>
-     * Specifies the minimum number of characters the user has to type in the
-     * edit box before the drop down list is shown.
-     * </p>
-     * 
-     * <p>
-     * When <code>threshold</code> is less than or equals 0, a threshold of 1 is
-     * applied.
-     * </p>
-     * 
-     * @param threshold
-     *            the number of characters to type before the drop down is shown
-     * 
-     * @see #getThreshold()
-     * 
-     * @attr ref
-     *       android.android.R.styleable#AutoCompleteTextView_completionThreshold
-     */
-    public void setThreshold(int threshold) {
-        if (threshold <= 0) {
-            threshold = 1;
-        }
-
-        mThreshold = threshold;
     }
 
     /**
@@ -836,17 +763,6 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
     }
 
     /**
-     * Returns <code>true</code> if the amount of text in the field meets or
-     * exceeds the {@link #getThreshold} requirement. You can override this to
-     * impose a different standard for when filtering will be triggered.
-     */
-    public boolean enoughToFilter() {
-        if (DEBUG)
-            Log.v(TAG, "Enough to filter: len=" + getText().length() + " threshold=" + mThreshold);
-        return getText().length() >= mThreshold;
-    }
-
-    /**
      * This is used to watch for edits to the text view. Note that we call to
      * methods on the auto complete text view class so that we can access
      * private vars without going through thunks.
@@ -888,20 +804,8 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
             return;
         }
 
-        // the drop down is shown only when a minimum number of characters
-        // was typed in the text view
-        if (enoughToFilter()) {
-            if (mFilter != null) {
-                performFiltering(getText(), mLastKeyCode);
-            }
-        } else {
-            // drop down is automatically dismissed when enough characters
-            // are deleted from the text view
-            if (!mDropDownAlwaysVisible)
-                dismissDropDown();
-            if (mFilter != null) {
-                mFilter.filter(null);
-            }
+        if (mFilter != null) {
+            performFiltering(getText(), mLastKeyCode);
         }
     }
 
@@ -1124,7 +1028,7 @@ public class HistoryEditText extends EditText implements Filter.FilterListener {
          * to filter.
          */
 
-        if ((count > 0 || mDropDownAlwaysVisible) && enoughToFilter()) {
+        if ((count > 0 || mDropDownAlwaysVisible)) {
             if (hasFocus() && hasWindowFocus()) {
                 showDropDown();
             }

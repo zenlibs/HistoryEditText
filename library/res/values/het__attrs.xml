@@ -4,7 +4,6 @@
     <declare-styleable name="HistoryEditText">
         <attr name="android:completionHint" />
         <attr name="android:completionHintView" />
-        <attr name="android:completionThreshold" />
         <attr name="android:dropDownSelector" />
         <attr name="android:dropDownVerticalOffset" />
         <attr name="android:dropDownHorizontalOffset" />
