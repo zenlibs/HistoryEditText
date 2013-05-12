@@ -16,6 +16,8 @@
 
 package com.zenlibs.historyedittext;
 
+import com.commonsware.cwac.merge.MergeAdapter;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,10 +25,16 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filter.FilterListener;
+import android.widget.Filterable;
+import android.widget.ListAdapter;
 
 public class HistoryEditText extends AbsHistoryEditText {
 
     private boolean mFirstFiltering = true;
+    private ListAdapter mHistoryAdapter;
+    private Filter mHistoryFilter;
 
     public HistoryEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -39,24 +47,15 @@ public class HistoryEditText extends AbsHistoryEditText {
     public HistoryEditText(Context context) {
         super(context);
     }
-    
+
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
         if (focused) {
-            performFiltering();
+            performFiltering(null, -1);
         }
     }
-    
-    @Override
-    protected void performFiltering() {
-        if (mFirstFiltering) {
-            rebuildAdapter();
-            mFirstFiltering = false;
-        }
-        super.performFiltering();
-    }
-    
+
     @Override
     public void onEditorAction(int actionCode) {
         super.onEditorAction(actionCode);
@@ -66,15 +65,48 @@ public class HistoryEditText extends AbsHistoryEditText {
         }
     }
 
-    private void rebuildAdapter() {
-        SQLiteDatabase db = HistoryDb.getReadable(getContext());
-        Cursor c = HistoryDb.queryByTag(db, (String)getTag());
-        int count = c.getCount();
-        if (count == 0) {
-            ArrayAdapter<String> adapter = null;
-            setAdapter(adapter);
+    private <T extends ListAdapter & Filterable> void setHistoryAdapter(T adapter) {
+        mHistoryAdapter = adapter;
+        mHistoryFilter = adapter.getFilter();
+    }
+
+    @Override
+    protected void performFiltering(final CharSequence text, final int keyCode) {
+        if (mFirstFiltering) {
+            rebuildAdapter();
+            mFirstFiltering = false;
+        }
+        if (text == null) {
+            HistoryEditText.super.performFiltering(text, keyCode);
         }
         else { 
+            mHistoryFilter.filter(text, new FilterListener() {
+                @Override
+                public void onFilterComplete(int count) {
+                    HistoryEditText.super.performFiltering(text, keyCode);
+                }
+            });
+        }
+    }
+
+    @Override
+    protected ListAdapter getCombinedAdapter(ListAdapter userAdapter) {
+        if (mHistoryAdapter == null) {
+            return userAdapter;
+        }
+        MergeAdapter mergeAdapter = new MergeAdapter();
+        mergeAdapter.addAdapter(mHistoryAdapter);
+        mergeAdapter.addAdapter(userAdapter);
+        return mergeAdapter;
+    }
+
+    private void rebuildAdapter() {
+        SQLiteDatabase db = HistoryDb.getReadable(getContext());
+        Cursor c = HistoryDb.queryByTag(db, (String) getTag());
+        int count = c.getCount();
+        if (count == 0) {
+            setHistoryAdapter(null);
+        } else {
             String[] items = new String[count];
             int i = 0;
             while (c.moveToNext()) {
@@ -82,9 +114,9 @@ public class HistoryEditText extends AbsHistoryEditText {
             }
             c.close();
             db.close();
-            int itemLayout = android.R.layout.simple_dropdown_item_1line;
+            int itemLayout = R.layout.het__dropdown_history_item;
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), itemLayout, items);
-            setAdapter(adapter);
+            setHistoryAdapter(adapter);
         }
     }
 
@@ -97,7 +129,7 @@ public class HistoryEditText extends AbsHistoryEditText {
 
     private void addTextToHistory(String text) {
         SQLiteDatabase db = HistoryDb.getWritable(getContext());
-        HistoryDb.insertEntry(db, (String)getTag(), text);
+        HistoryDb.insertEntry(db, (String) getTag(), text);
         db.close();
     }
 

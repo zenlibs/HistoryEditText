@@ -100,7 +100,7 @@ import android.widget.TextView;
  * @attr ref
  *       android.android.R.styleable#AutoCompleteTextView_dropDownHorizontalOffset
  */
-abstract class AbsHistoryEditText extends EditText implements Filter.FilterListener {
+abstract class AbsHistoryEditText extends EditText {
     static final boolean DEBUG = false;
     static final String TAG = "AutoCompleteTextView";
 
@@ -116,7 +116,8 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
     private CharSequence mHintText;
     private int mHintResource;
 
-    private ListAdapter mAdapter;
+    // Zenlibs: this was mAdapter, renamed to mUserAdapter
+    private ListAdapter mUserAdapter;
     private Filter mFilter;
 
     private FroyoPopupWindow mPopup;
@@ -154,6 +155,8 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
     private PassThroughClickListener mPassThroughClickListener;
     private PopupDataSetObserver mObserver;
     private InputMethodManager mImm;
+    // Zenlibs
+    private ListAdapter mCombinedAdapter;
 
     public AbsHistoryEditText(Context context) {
         this(context, null);
@@ -177,8 +180,10 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
         mHintText = a.getText(R.styleable.HistoryEditText_android_completionHint);
 
         mDropDownListHighlight = a.getDrawable(R.styleable.HistoryEditText_android_dropDownSelector);
-        mDropDownVerticalOffset = (int) a.getDimension(R.styleable.HistoryEditText_android_dropDownVerticalOffset, 0.0f);
-        mDropDownHorizontalOffset = (int) a.getDimension(R.styleable.HistoryEditText_android_dropDownHorizontalOffset, 0.0f);
+        mDropDownVerticalOffset = (int) a
+                .getDimension(R.styleable.HistoryEditText_android_dropDownVerticalOffset, 0.0f);
+        mDropDownHorizontalOffset = (int) a.getDimension(R.styleable.HistoryEditText_android_dropDownHorizontalOffset,
+                0.0f);
 
         // Get the anchor's id now, but the view won't be ready, so wait to actually get the
         // view and store it in mDropDownAnchorView lazily in getDropDownAnchorView later.
@@ -577,7 +582,7 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
      * @return a data adapter used for auto completion
      */
     public ListAdapter getAdapter() {
-        return mAdapter;
+        return mUserAdapter;
     }
 
     /**
@@ -605,23 +610,29 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
      * @see android.widget.Filterable
      * @see android.widget.ListAdapter
      */
-    protected <T extends ListAdapter & Filterable> void setAdapter(T adapter) {
-        if (mObserver == null) {
-            mObserver = new PopupDataSetObserver();
-        } else if (mAdapter != null) {
-            mAdapter.unregisterDataSetObserver(mObserver);
-        }
-        mAdapter = adapter;
-        if (mAdapter != null) {
-            //noinspection unchecked
-            mFilter = ((Filterable) mAdapter).getFilter();
-            adapter.registerDataSetObserver(mObserver);
+    public <T extends ListAdapter & Filterable> void setAdapter(T adapter) {
+        mUserAdapter = adapter;
+        if (mUserAdapter != null) {  
+            mFilter = ((Filterable) mUserAdapter).getFilter();
         } else {
             mFilter = null;
         }
+        rebuildCombinedAdapter();
+    }
+    
+    public void setCombinedAdapter(ListAdapter adapter) {
+        if (mObserver == null) {
+            mObserver = new PopupDataSetObserver();
+        } else if (mCombinedAdapter != null) {
+            mCombinedAdapter.unregisterDataSetObserver(mObserver);
+        }
+        mCombinedAdapter = adapter;
+        if (mCombinedAdapter != null) {
+            adapter.registerDataSetObserver(mObserver);
+        } 
 
         if (mDropDownList != null) {
-            mDropDownList.setAdapter(mAdapter);
+            mDropDownList.setAdapter(mCombinedAdapter);
         }
     }
 
@@ -679,7 +690,7 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
 
                 final boolean below = !mPopup.isAboveAnchor();
 
-                final ListAdapter adapter = mAdapter;
+                final ListAdapter adapter = mCombinedAdapter;
 
                 boolean allEnabled;
                 int firstItem = Integer.MAX_VALUE;
@@ -802,10 +813,6 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
             return;
         }
 
-        performFiltering();
-    }
-
-    protected void performFiltering() {
         if (mFilter != null) {
             performFiltering(getText(), mLastKeyCode);
         }
@@ -900,7 +907,16 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
      *            method.
      */
     protected void performFiltering(CharSequence text, int keyCode) {
-        mFilter.filter(text, this);
+        if (text == null) {
+            updateDropDownForFilter(0, true);
+        } else { 
+            mFilter.filter(text, new Filter.FilterListener() {
+                @Override
+                public void onFilterComplete(int count) {
+                    updateDropDownForFilter(count, false);
+                }
+            });
+        }
     }
 
     /**
@@ -936,7 +952,7 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
             if (position < 0) {
                 selectedItem = mDropDownList.getSelectedItem();
             } else {
-                selectedItem = mAdapter.getItem(position);
+                selectedItem = mCombinedAdapter.getItem(position);
             }
             if (selectedItem == null) {
                 Log.w(TAG, "performCompletion: no selected item");
@@ -1011,13 +1027,7 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
         Selection.setSelection(spannable, spannable.length());
     }
 
-    /** {@inheritDoc} */
-    public void onFilterComplete(int count) {
-        updateDropDownForFilter(count);
-
-    }
-
-    private void updateDropDownForFilter(int count) {
+    private void updateDropDownForFilter(int count, boolean force) {
         // Not attached to window, don't update drop-down
         if (getWindowVisibility() == View.GONE)
             return;
@@ -1029,11 +1039,11 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
          * to filter.
          */
 
-        if ((count > 0 || false)) {
+        if (count > 0 || force) {
             if (hasFocus() && hasWindowFocus()) {
                 showDropDown();
             }
-        } else if (true) {
+        } else {
             dismissDropDown();
         }
     }
@@ -1255,18 +1265,19 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
         ViewGroup dropDownView;
         int otherHeights = 0;
 
-        final ListAdapter adapter = mAdapter;
-        if (adapter != null) {
+        rebuildCombinedAdapter();
+        
+        if (mCombinedAdapter != null) {
             if (mImm != null) {
-                final int count = Math.min(adapter.getCount(), 20);
+                final int count = Math.min(mCombinedAdapter.getCount(), 20);
                 CompletionInfo[] completions = new CompletionInfo[count];
                 int realCount = 0;
 
                 for (int i = 0; i < count; i++) {
-                    if (adapter.isEnabled(i)) {
+                    if (mCombinedAdapter.isEnabled(i)) {
                         realCount++;
-                        Object item = adapter.getItem(i);
-                        long id = adapter.getItemId(i);
+                        Object item = mCombinedAdapter.getItem(i);
+                        long id = mCombinedAdapter.getItemId(i);
                         completions[i] = new CompletionInfo(id, i, convertSelectionToString(item));
                     }
                 }
@@ -1306,7 +1317,7 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
 
             mDropDownList = new DropDownListView(context);
             mDropDownList.setSelector(mDropDownListHighlight);
-            mDropDownList.setAdapter(adapter);
+            mDropDownList.setAdapter(mCombinedAdapter);
             mDropDownList.setVerticalFadingEdgeEnabled(true);
             mDropDownList.setOnItemClickListener(mDropDownItemClickListener);
             mDropDownList.setFocusable(true);
@@ -1395,6 +1406,14 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
 
         return listContent + otherHeights;
     }
+
+    protected void rebuildCombinedAdapter() {
+        ListAdapter adapter = getCombinedAdapter(mUserAdapter);
+        setCombinedAdapter(adapter);
+    }
+
+    // Zenlibs
+    protected abstract ListAdapter getCombinedAdapter(ListAdapter userAdapter);
 
     private View getHintView(Context context) {
         if (mHintText != null && mHintText.length() > 0) {
@@ -1691,16 +1710,16 @@ abstract class AbsHistoryEditText extends EditText implements Filter.FilterListe
             if (isPopupShowing()) {
                 // This will resize the popup to fit the new adapter's content
                 showDropDown();
-            } else if (mAdapter != null) {
+            } else if (mCombinedAdapter != null) {
                 // If the popup is not showing already, showing it will cause
                 // the list of data set observers attached to the adapter to
                 // change. We can't do it from here, because we are in the middle
                 // of iterating throught he list of observers.
                 post(new Runnable() {
                     public void run() {
-                        final ListAdapter adapter = mAdapter;
+                        final ListAdapter adapter = mCombinedAdapter;
                         if (adapter != null) {
-                            updateDropDownForFilter(adapter.getCount());
+                            updateDropDownForFilter(adapter.getCount(), false);
                         }
                     }
                 });

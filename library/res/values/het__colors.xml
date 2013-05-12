@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="bright_foreground_dark">@android:color/background_light</color>
+    <color name="bright_foreground_light">@android:color/background_dark</color>
+    <color name="bright_foreground_dark_disabled">#80ffffff</color>
+    <color name="bright_foreground_light_disabled">#80000000</color>
+    <color name="bright_foreground_dark_inverse">@color/bright_foreground_light</color>
+    <color name="bright_foreground_light_inverse">@color/bright_foreground_dark</color>
+    <color name="dim_foreground_dark">#bebebe</color>
+
+    <!-- The following colors are extracted from the source code of JB -->
+    <color name="highlighted_text_dark">#9983CC39</color>
+    <color name="hint_foreground_dark">#808080</color>
+    <color name="highlighted_text_light">#9983CC39</color>
+    <color name="link_text_dark">#5c5cff</color>
+    <color name="hint_foreground_light">#808080</color>
+    <color name="dim_foreground_light">#323232</color>
+    <color name="link_text_light">#0000ee</color>
+
+</resources>

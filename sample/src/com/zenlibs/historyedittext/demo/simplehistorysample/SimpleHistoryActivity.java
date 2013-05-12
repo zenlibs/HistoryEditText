@@ -24,13 +24,14 @@ public class SimpleHistoryActivity extends Activity {
         setContentView(R.layout.activity_simple);
 
         mHistoryEditText = (HistoryEditText) findViewById(R.id.historyEditText);
+        mHistoryEditText.setAdapter(createAdapter());
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
         autoCompleteTextView.setAdapter(createAdapter());
     }
 
     private ArrayAdapter<String> createAdapter() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+                R.layout.het__simple_dropdown_item_1line, COUNTRIES);
         return adapter;
     }
 }
