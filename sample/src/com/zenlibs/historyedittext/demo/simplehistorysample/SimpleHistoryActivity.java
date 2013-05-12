@@ -24,7 +24,6 @@ public class SimpleHistoryActivity extends Activity {
         setContentView(R.layout.activity_simple);
 
         mHistoryEditText = (HistoryEditText) findViewById(R.id.historyEditText);
-        mHistoryEditText.setAdapter(createAdapter());
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView);
         autoCompleteTextView.setAdapter(createAdapter());
     }

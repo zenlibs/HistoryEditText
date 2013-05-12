@@ -13,7 +13,10 @@
     <com.zenlibs.historyedittext.HistoryEditText
         android:id="@+id/historyEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:imeOptions="actionSearch"
+        android:tag="search"
+        android:inputType="textNoSuggestions" />
 
     <TextView
         android:layout_width="match_parent"
@@ -24,6 +27,8 @@
     <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:imeOptions="actionSearch"
+        android:inputType="textNoSuggestions" />
 
 </LinearLayout>
