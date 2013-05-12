@@ -71,7 +71,8 @@ public class HistoryEditText extends AbsHistoryEditText {
         Cursor c = HistoryDb.queryByTag(db, (String)getTag());
         int count = c.getCount();
         if (count == 0) {
-            setAdapter(null);
+            ArrayAdapter<String> adapter = null;
+            setAdapter(adapter);
         }
         else { 
             String[] items = new String[count];

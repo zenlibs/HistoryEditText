@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>sample</artifactId>
-	<name>MultiChoiceAdapter Sample</name>
+	<name>HistoryEditText Sample</name>
 	<packaging>apk</packaging>
 
 	<parent>

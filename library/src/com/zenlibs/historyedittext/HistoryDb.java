@@ -12,22 +12,44 @@ class HistoryDb {
     private static final String COLUMN_TAG = "tag";
     private static final String COLUMN_TEXT = "text";
     private static final String COLUMN_TIME = "time";
-    private static final String[] QUERY_BY_TAG_COLUMNS = new String[] { COLUMN_TEXT };
+    private static final String[] QUERY_BY_TAG_COLUMNS = new String[]{COLUMN_TEXT};
     private static final String QUERY_BY_TAG_SELECTION = COLUMN_TAG + "=?";
     private static final String QUERY_BY_TAG_ORDER = COLUMN_TIME + " DESC";
+    private static final String QUERY_BY_TAG_TEXT_SELECTION = COLUMN_TAG + "=? AND " + COLUMN_TEXT + "=?";
     private static HistoryDbSQLiteHelper mHelper;
 
     public static synchronized void insertEntry(SQLiteDatabase db, String tag, String text) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_TAG, tag);
-        values.put(COLUMN_TEXT, text);
-        values.put(COLUMN_TIME, System.currentTimeMillis());
-        db.insert(HISTORY_TABLE, null, values);
+
+        if (text != null) {
+            text = text.trim();
+
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_TAG, tag);
+            values.put(COLUMN_TEXT, text);
+            values.put(COLUMN_TIME, System.currentTimeMillis());
+
+            // Test if it already exists
+            Cursor c = queryByTagText(db, tag, text);
+
+            if (c.getCount() > 0) {
+                // It's an update
+                db.update(HISTORY_TABLE, values, QUERY_BY_TAG_TEXT_SELECTION, new String[]{tag, text});
+
+            } else {
+                //  It's an insert
+                db.insert(HISTORY_TABLE, null, values);
+            }
+        }
     }
-    
+
     public static Cursor queryByTag(SQLiteDatabase db, String tag) {
-        return db.query(HISTORY_TABLE, QUERY_BY_TAG_COLUMNS, QUERY_BY_TAG_SELECTION, new String[] { tag }, null, null,
+        return db.query(HISTORY_TABLE, QUERY_BY_TAG_COLUMNS, QUERY_BY_TAG_SELECTION, new String[]{tag}, null, null,
                 QUERY_BY_TAG_ORDER);
+    }
+
+    private static Cursor queryByTagText(SQLiteDatabase db, String tag, String text) {
+        return db.query(HISTORY_TABLE, QUERY_BY_TAG_COLUMNS, QUERY_BY_TAG_TEXT_SELECTION,
+                new String[]{tag, text}, null, null, QUERY_BY_TAG_ORDER);
     }
 
     static SQLiteDatabase getReadable(Context context) {
