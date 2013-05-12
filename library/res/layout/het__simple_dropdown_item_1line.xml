@@ -3,7 +3,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android" 
     android:id="@android:id/text1"
     style="?android:attr/dropDownItemStyle"
-    android:textAppearance="@style/TextAppearance.Widget.PopupMenu"
+    android:textAppearance="@style/TextAppearance.HET.Widget.PopupMenu"
     android:singleLine="true"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"

@@ -8,4 +8,4 @@
     android:drawableLeft="@drawable/het__ic_device_access_time"
     android:ellipsize="marquee"
     android:singleLine="true"
-    android:textAppearance="@style/TextAppearance.Widget.PopupMenu" />
+    android:textAppearance="@style/TextAppearance.HET.Widget.PopupMenu" />
