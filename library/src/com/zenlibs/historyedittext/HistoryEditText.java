@@ -16,9 +16,8 @@
 
 package com.zenlibs.historyedittext;
 
-import com.commonsware.cwac.merge.MergeAdapter;
-
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Rect;
@@ -29,19 +28,34 @@ import android.widget.Filter;
 import android.widget.Filter.FilterListener;
 import android.widget.Filterable;
 import android.widget.ListAdapter;
+import com.commonsware.cwac.merge.MergeAdapter;
 
 public class HistoryEditText extends AbsHistoryEditText {
 
     private boolean mFirstFiltering = true;
     private ListAdapter mHistoryAdapter;
     private Filter mHistoryFilter;
+    private int mMaxHistoryValues;
 
     public HistoryEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        parseAttrs(context, attrs, defStyle);
+    }
+
+    private void parseAttrs(Context context, AttributeSet attrs, int defStyle) {
+
+        // Getting max history values
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.HistoryEditText, defStyle,
+                R.style.Widget_HistoryEditText);
+
+        mMaxHistoryValues = a.getInt(R.styleable.HistoryEditText_maxHistoryValues, 5);
+
+        a.recycle();
     }
 
     public HistoryEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        parseAttrs(context, attrs, android.R.attr.autoCompleteTextViewStyle);
     }
 
     public HistoryEditText(Context context) {
@@ -67,7 +81,9 @@ public class HistoryEditText extends AbsHistoryEditText {
 
     private <T extends ListAdapter & Filterable> void setHistoryAdapter(T adapter) {
         mHistoryAdapter = adapter;
-        mHistoryFilter = adapter.getFilter();
+        if (adapter != null) {
+            mHistoryFilter = adapter.getFilter();
+        }
     }
 
     @Override
@@ -78,8 +94,7 @@ public class HistoryEditText extends AbsHistoryEditText {
         }
         if (text == null) {
             HistoryEditText.super.performFiltering(text, keyCode);
-        }
-        else { 
+        } else if (mHistoryFilter != null) {
             mHistoryFilter.filter(text, new FilterListener() {
                 @Override
                 public void onFilterComplete(int count) {
@@ -103,13 +118,14 @@ public class HistoryEditText extends AbsHistoryEditText {
     private void rebuildAdapter() {
         SQLiteDatabase db = HistoryDb.getReadable(getContext());
         Cursor c = HistoryDb.queryByTag(db, (String) getTag());
-        int count = c.getCount();
+        int count = Math.min(c.getCount(), mMaxHistoryValues);
         if (count == 0) {
-            setHistoryAdapter(null);
+            ArrayAdapter<String> adapter = null;
+            setHistoryAdapter(adapter);
         } else {
             String[] items = new String[count];
             int i = 0;
-            while (c.moveToNext()) {
+            while (c.moveToNext() && i < count) {
                 items[i++] = HistoryDb.getText(c);
             }
             c.close();

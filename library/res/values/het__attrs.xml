@@ -11,6 +11,7 @@
         <attr name="android:dropDownWidth" />
         <attr name="android:dropDownHeight" />
         <attr name="android:inputType" />
+        <attr name="maxHistoryValues" format="integer"/>
     </declare-styleable>
 
 </resources>
