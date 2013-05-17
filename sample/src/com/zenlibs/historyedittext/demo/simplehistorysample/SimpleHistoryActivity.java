@@ -85,5 +85,6 @@ public class SimpleHistoryActivity extends SherlockActivity {
 
     private void clearHistory() {
         mHistoryEditText.clearHistory();
+        mHistoryEditText2.clearHistory();
     }
 }
