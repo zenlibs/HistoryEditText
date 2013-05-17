@@ -612,14 +612,14 @@ abstract class AbsHistoryEditText extends EditText {
      */
     public <T extends ListAdapter & Filterable> void setAdapter(T adapter) {
         mUserAdapter = adapter;
-        if (mUserAdapter != null) {  
+        if (mUserAdapter != null) {
             mFilter = ((Filterable) mUserAdapter).getFilter();
         } else {
             mFilter = null;
         }
         rebuildCombinedAdapter();
     }
-    
+
     public void setCombinedAdapter(ListAdapter adapter) {
         if (mObserver == null) {
             mObserver = new PopupDataSetObserver();
@@ -629,7 +629,7 @@ abstract class AbsHistoryEditText extends EditText {
         mCombinedAdapter = adapter;
         if (mCombinedAdapter != null) {
             adapter.registerDataSetObserver(mObserver);
-        } 
+        }
 
         if (mDropDownList != null) {
             mDropDownList.setAdapter(mCombinedAdapter);
@@ -909,7 +909,7 @@ abstract class AbsHistoryEditText extends EditText {
     protected void performFiltering(CharSequence text, int keyCode) {
         if (text == null) {
             updateDropDownForFilter(0, true);
-        } else { 
+        } else {
             mFilter.filter(text, new Filter.FilterListener() {
                 @Override
                 public void onFilterComplete(int count) {
@@ -1051,7 +1051,7 @@ abstract class AbsHistoryEditText extends EditText {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        if (!hasWindowFocus && true) {
+        if (!hasWindowFocus) {
             dismissDropDown();
         }
     }
@@ -1074,9 +1074,10 @@ abstract class AbsHistoryEditText extends EditText {
         // Perform validation if the view is losing focus.
         if (!focused) {
             performValidation();
-        }
-        if (!focused && true) {
             dismissDropDown();
+        } else {
+            // Zenlibs
+            showDropDown();
         }
     }
 
@@ -1266,7 +1267,7 @@ abstract class AbsHistoryEditText extends EditText {
         int otherHeights = 0;
 
         rebuildCombinedAdapter();
-        
+
         if (mCombinedAdapter != null) {
             if (mImm != null) {
                 final int count = Math.min(mCombinedAdapter.getCount(), 20);
