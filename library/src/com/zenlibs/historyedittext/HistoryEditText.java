@@ -62,6 +62,17 @@ public class HistoryEditText extends AbsHistoryEditText {
         super(context);
     }
 
+    public void clearHistory() {
+        boolean wasShowing = isPopupShowing();
+        SQLiteDatabase db = HistoryDb.getWritable(getContext());
+        HistoryDb.clear(db);
+        db.close();
+        rebuildAdapter();
+        if (wasShowing) {
+            showDropDown();
+        }
+    }
+
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect);

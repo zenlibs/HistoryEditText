@@ -18,7 +18,11 @@ class HistoryDb {
     private static final String QUERY_BY_TAG_TEXT_SELECTION = COLUMN_TAG + "=? AND " + COLUMN_TEXT + "=?";
     private static HistoryDbSQLiteHelper mHelper;
 
-    public static synchronized void insertEntry(SQLiteDatabase db, String tag, String text) {
+    public static void clear(SQLiteDatabase db) {
+        db.delete(HISTORY_TABLE, null, null);
+    }
+
+    public static void insertEntry(SQLiteDatabase db, String tag, String text) {
         if (text != null) {
             text = text.trim();
 

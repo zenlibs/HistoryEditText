@@ -3,4 +3,5 @@
 
     <string name="app_name">HistoryEditText Demo</string>
     <string name="activity_title_simple_history">Simple History</string>
+    <string name="clear_history">Clear history</string>
 </resources>
