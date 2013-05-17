@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"
-        android:tag="search"
+        android:tag="search2"
         app:maxHistoryValues="3" />
 
 </LinearLayout>
