@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"
-        android:tag="search"
+        android:tag="no_user_adapter_search"
         app:maxHistoryValues="3" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"
-        android:tag="search2"
+        android:tag="no_user_adapter_search_2"
         app:maxHistoryValues="3" />
 
 </LinearLayout>
