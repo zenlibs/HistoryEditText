@@ -118,12 +118,21 @@ public class HistoryEditText extends AbsHistoryEditText {
     @Override
     protected ListAdapter getCombinedAdapter(ListAdapter userAdapter) {
         if (mHistoryAdapter == null) {
-            return userAdapter;
+            if (enoughToFilter()) {
+                return userAdapter;
+            } else {
+                return null;
+            }
+        } else {
+            if (enoughToFilter()) {
+                MergeAdapter mergeAdapter = new MergeAdapter();
+                mergeAdapter.addAdapter(mHistoryAdapter);
+                mergeAdapter.addAdapter(userAdapter);
+                return mergeAdapter;
+            } else {
+                return mHistoryAdapter;
+            }
         }
-        MergeAdapter mergeAdapter = new MergeAdapter();
-        mergeAdapter.addAdapter(mHistoryAdapter);
-        mergeAdapter.addAdapter(userAdapter);
-        return mergeAdapter;
     }
 
     private void rebuildAdapter() {

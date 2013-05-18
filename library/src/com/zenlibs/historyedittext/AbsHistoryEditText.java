@@ -157,6 +157,7 @@ abstract class AbsHistoryEditText extends EditText {
     private InputMethodManager mImm;
     // Zenlibs
     private ListAdapter mCombinedAdapter;
+    private int mThreshold = 1;
 
     public AbsHistoryEditText(Context context) {
         this(context, null);
@@ -177,6 +178,8 @@ abstract class AbsHistoryEditText extends EditText {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.HistoryEditText, defStyle,
                 R.style.Widget_HistoryEditText);
 
+        mThreshold = a.getInt(R.styleable.HistoryEditText_android_completionThreshold, 2);
+        
         mHintText = a.getText(R.styleable.HistoryEditText_android_completionHint);
 
         mDropDownListHighlight = a.getDrawable(R.styleable.HistoryEditText_android_dropDownSelector);
@@ -496,6 +499,45 @@ abstract class AbsHistoryEditText extends EditText {
 
     /**
      * <p>
+     * Returns the number of characters the user must type before the drop down
+     * list is shown.
+     * </p>
+     * 
+     * @return the minimum number of characters to type to show the drop down
+     * 
+     * @see #setThreshold(int)
+     */
+    public int getThreshold() {
+        return mThreshold;
+    }
+
+    /**
+     * <p>
+     * Specifies the minimum number of characters the user has to type in the
+     * edit box before the drop down list is shown.
+     * </p>
+     * 
+     * <p>
+     * When <code>threshold</code> is less than or equals 0, a threshold of 1 is
+     * applied.
+     * </p>
+     * 
+     * @param threshold
+     *            the number of characters to type before the drop down is shown
+     * 
+     * @see #getThreshold()
+     * 
+     * @attr ref android.R.styleable#AutoCompleteTextView_completionThreshold
+     */
+    public void setThreshold(int threshold) {
+        if (threshold <= 0) {
+            threshold = 1;
+        }
+        mThreshold = threshold;
+    }
+
+    /**
+     * <p>
      * Sets the listener that will be notified when the user clicks an item in
      * the drop down list.
      * </p>
@@ -620,7 +662,8 @@ abstract class AbsHistoryEditText extends EditText {
         rebuildCombinedAdapter();
     }
 
-    public void setCombinedAdapter(ListAdapter adapter) {
+    // Zenlibs
+    void setCombinedAdapter(ListAdapter adapter) {
         if (mObserver == null) {
             mObserver = new PopupDataSetObserver();
         } else if (mCombinedAdapter != null) {
@@ -1411,6 +1454,17 @@ abstract class AbsHistoryEditText extends EditText {
     protected void rebuildCombinedAdapter() {
         ListAdapter adapter = getCombinedAdapter(mUserAdapter);
         setCombinedAdapter(adapter);
+    }
+
+    /**
+     * Returns <code>true</code> if the amount of text in the field meets or
+     * exceeds the {@link #getThreshold} requirement. You can override this to
+     * impose a different standard for when filtering will be triggered.
+     */
+    protected boolean enoughToFilter() {
+        if (DEBUG)
+            Log.v(TAG, "Enough to filter: len=" + getText().length() + " threshold=" + mThreshold);
+        return getText().length() >= mThreshold;
     }
 
     // Zenlibs
