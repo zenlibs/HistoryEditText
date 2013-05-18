@@ -22,7 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".simplehistorysample.SimpleHistoryActivity"
-                android:label="@string/activity_title_simple_history"/>
+        <activity
+            android:name=".simplehistorysample.SimpleHistoryActivity"
+            android:label="@string/activity_title_basic_usage" />
+        <activity
+            android:name=".nouseradaptersample.NoUserAdapterActivity"
+            android:label="@string/activity_title_no_user_adapter" />
     </application>
+
 </manifest>

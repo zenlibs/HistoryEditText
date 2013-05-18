@@ -179,7 +179,7 @@ abstract class AbsHistoryEditText extends EditText {
                 R.style.Widget_HistoryEditText);
 
         mThreshold = a.getInt(R.styleable.HistoryEditText_android_completionThreshold, 2);
-        
+
         mHintText = a.getText(R.styleable.HistoryEditText_android_completionHint);
 
         mDropDownListHighlight = a.getDrawable(R.styleable.HistoryEditText_android_dropDownSelector);
@@ -664,6 +664,15 @@ abstract class AbsHistoryEditText extends EditText {
 
     // Zenlibs
     void setCombinedAdapter(ListAdapter adapter) {
+        if (adapter == null) {
+            if (mObserver != null && mCombinedAdapter != null) {
+                mCombinedAdapter.unregisterDataSetObserver(mObserver);
+            }
+            mCombinedAdapter = null;
+            mFilter = null;
+            return;
+        }
+
         if (mObserver == null) {
             mObserver = new PopupDataSetObserver();
         } else if (mCombinedAdapter != null) {
@@ -856,9 +865,7 @@ abstract class AbsHistoryEditText extends EditText {
             return;
         }
 
-        if (mFilter != null) {
-            performFiltering(getText(), mLastKeyCode);
-        }
+        performFiltering(getText(), mLastKeyCode);
     }
 
     /**
@@ -884,6 +891,12 @@ abstract class AbsHistoryEditText extends EditText {
      * @return a sequence of characters representing the selected suggestion
      */
     protected CharSequence convertSelectionToString(Object selectedItem) {
+        // <Zenlibs>
+        if (mFilter == null) {
+            // This means there's no user adapter and thus no filter
+            return selectedItem == null ? "" : selectedItem.toString();
+        }
+        // </ZenLibs>
         return mFilter.convertResultToString(selectedItem);
     }
 
@@ -953,12 +966,16 @@ abstract class AbsHistoryEditText extends EditText {
         if (text == null) {
             updateDropDownForFilter(0, true);
         } else {
-            mFilter.filter(text, new Filter.FilterListener() {
-                @Override
-                public void onFilterComplete(int count) {
-                    updateDropDownForFilter(count, false);
-                }
-            });
+            // <Zenlibs>
+            if (mFilter != null) {
+                // </Zenlibs>
+                mFilter.filter(text, new Filter.FilterListener() {
+                    @Override
+                    public void onFilterComplete(int count) {
+                        updateDropDownForFilter(count, false);
+                    }
+                });
+            }
         }
     }
 

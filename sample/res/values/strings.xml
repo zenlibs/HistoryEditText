@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">HistoryEditText Demo</string>
-    <string name="activity_title_simple_history">Simple History</string>
+    <string name="activity_title_basic_usage">Basic usage</string>
+    <string name="activity_title_no_user_adapter">No user adapter</string>
     <string name="clear_history">Clear history</string>
 </resources>

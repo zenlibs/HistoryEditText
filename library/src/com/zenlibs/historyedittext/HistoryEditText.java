@@ -67,7 +67,7 @@ public class HistoryEditText extends AbsHistoryEditText {
         SQLiteDatabase db = HistoryDb.getWritable(getContext());
         HistoryDb.clear(db);
         db.close();
-        rebuildAdapter();
+        rebuildHistoryAdapter();
         if (wasShowing) {
             showDropDown();
         }
@@ -86,7 +86,7 @@ public class HistoryEditText extends AbsHistoryEditText {
         super.onEditorAction(actionCode);
         if (actionCode == getImeOptions()) {
             addCurrentTextToHistory();
-            rebuildAdapter();
+            rebuildHistoryAdapter();
         }
     }
 
@@ -95,12 +95,13 @@ public class HistoryEditText extends AbsHistoryEditText {
         if (adapter != null) {
             mHistoryFilter = adapter.getFilter();
         }
+        rebuildCombinedAdapter();
     }
 
     @Override
     protected void performFiltering(final CharSequence text, final int keyCode) {
         if (mFirstFiltering) {
-            rebuildAdapter();
+            rebuildHistoryAdapter();
             mFirstFiltering = false;
         }
         if (text == null) {
@@ -124,7 +125,7 @@ public class HistoryEditText extends AbsHistoryEditText {
                 return null;
             }
         } else {
-            if (enoughToFilter()) {
+            if (enoughToFilter() && userAdapter != null) {
                 MergeAdapter mergeAdapter = new MergeAdapter();
                 mergeAdapter.addAdapter(mHistoryAdapter);
                 mergeAdapter.addAdapter(userAdapter);
@@ -135,7 +136,7 @@ public class HistoryEditText extends AbsHistoryEditText {
         }
     }
 
-    private void rebuildAdapter() {
+    private void rebuildHistoryAdapter() {
         SQLiteDatabase db = HistoryDb.getReadable(getContext());
         Cursor c = HistoryDb.queryByTag(db, (String) getTag());
         int count = Math.min(c.getCount(), mMaxHistoryValues);
